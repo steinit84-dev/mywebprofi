@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kundenbrief – MyWebProfi</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+/* ========================================================
+   KUNDENBRIEF – MyWebProfi Intake Wizard
+   6-stufiger Fragebogen → generiert fertigen Prompt
+   ======================================================== */
+
+:root {
+  --navy:       #0A1628;
+  --navy-l:     #13233F;
+  --navy-mid:   #1C3059;
+  --gold:       #C49A3C;
+  --gold-l:     #D4AC52;
+  --gold-pale:  rgba(196,154,60,0.12);
+  --cream:      #F8F4EE;
+  --cream-d:    #EDE7DA;
+  --white:      #FFFFFF;
+  --text:       #1A1A2E;
+  --muted:      #7A849E;
+  --border:     rgba(10,22,40,0.12);
+  --success:    #2e7d32;
+  --error:      #c62828;
+
+  --font-d: 'Cormorant Garamond', serif;
+  --font-b: 'DM Sans', system-ui, sans-serif;
+  --ease:   cubic-bezier(0.22, 1, 0.36, 1);
+  --r:      12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-b);
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top Bar ---------- */
+.topbar {
+  background: var(--navy);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.logo {
+  display: flex; align-items: center; gap: .5rem;
+  text-decoration: none; color: white;
+  font-size: .95rem; font-weight: 500;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--gold); color: var(--navy);
+  border-radius: 7px; display: grid;
+  place-items: center; font-weight: 700;
+  font-size: .8rem;
+}
+.logo strong { color: var(--gold); font-weight: 700; }
+.topbar-title {
+  font-size: .8rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+}
+
+/* ---------- Progress Bar ---------- */
+.progress-wrap {
+  background: var(--navy-l);
+  padding: 1.25rem 2rem;
+  position: sticky; top: 0; z-index: 50;
+}
+.progress-steps {
+  display: flex;
+  align-items: center;
+  max-width: 800px; margin: 0 auto;
+  gap: 0;
+}
+.p-step {
+  display: flex; flex-direction: column;
+  align-items: center; gap: .3rem;
+  flex: 1;
+  position: relative;
+}
+.p-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px; left: 50%;
+  width: 100%; height: 2px;
+  background: rgba(255,255,255,.1);
+  z-index: 0;
+}
+.p-step.done:not(:last-child)::after { background: var(--gold); }
+
+.p-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  border: 2px solid rgba(255,255,255,.2);
+  display: grid; place-items: center;
+  font-size: .7rem; font-weight: 700;
+  color: rgba(255,255,255,.4);
+  position: relative; z-index: 1;
+  transition: all .3s var(--ease);
+  flex-shrink: 0;
+}
+.p-step.active .p-dot {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--navy); box-shadow: 0 0 0 4px rgba(196,154,60,.2);
+}
+.p-step.done .p-dot {
+  background: var(--gold); border-color: var(--gold); color: var(--navy);
+}
+.p-step.done .p-dot::after { content: '✓'; font-size: .75rem; }
+.p-step.done .p-dot-num { display: none; }
+
+.p-label {
+  font-size: .65rem; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: rgba(255,255,255,.3);
+  text-align: center; white-space: nowrap;
+}
+.p-step.active .p-label { color: var(--gold); }
+.p-step.done .p-label  { color: rgba(255,255,255,.5); }
+
+/* ---------- Main Layout ---------- */
+.wizard-main {
+  flex: 1;
+  max-width: 860px; width: 100%;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* ---------- Steps ---------- */
+.step { display: none; animation: fadeSlide .4s var(--ease); }
+.step.active { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.step-header { margin-bottom: 2.5rem; }
+.step-label {
+  display: inline-block;
+  font-size: .75rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold);
+  background: var(--gold-pale);
+  border: 1px solid rgba(196,154,60,.25);
+  padding: .3rem .85rem; border-radius: 100px;
+  margin-bottom: .75rem;
+}
+.step-header h2 {
+  font-family: var(--font-d);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700; line-height: 1.15;
+  color: var(--navy);
+}
+.step-header p {
+  margin-top: .6rem; color: var(--muted);
+  font-size: .95rem; line-height: 1.6;
+}
+
+/* ---------- Form Fields ---------- */
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.field-full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: .4rem; }
+
+label {
+  font-size: .83rem; font-weight: 600;
+  color: var(--navy); display: flex;
+  align-items: center; gap: .35rem;
+}
+label .opt {
+  font-size: .72rem; font-weight: 400;
+  color: var(--muted); font-style: italic;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="email"],
+select, textarea {
+  width: 100%;
+  padding: .75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--white);
+  font-family: var(--font-b);
+  font-size: .9rem; color: var(--text);
+  transition: border-color .2s, box-shadow .2s;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196,154,60,.12);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); }
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%237A849E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+textarea { resize: vertical; min-height: 90px; }
+
+/* Radio Cards */
+.radio-grid {
+  display: grid;
+  gap: .75rem;
+  margin-bottom: 1.25rem;
+}
+.radio-grid-2 { grid-template-columns: 1fr 1fr; }
+.radio-grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+.radio-card {
+  position: relative;
+  cursor: pointer;
+}
+.radio-card input[type="radio"],
+.radio-card input[type="checkbox"] {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.radio-label {
+  display: flex; align-items: flex-start; gap: .75rem;
+  padding: .9rem 1.1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--white);
+  transition: all .2s var(--ease);
+  cursor: pointer;
+  user-select: none;
+}
+.radio-label:hover {
+  border-color: rgba(196,154,60,.4);
+  background: rgba(196,154,60,.04);
+}
+.radio-card input:checked + .radio-label {
+  border-color: var(--gold);
+  background: var(--gold-pale);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.radio-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.radio-text { display: flex; flex-direction: column; gap: .15rem; }
+.radio-title { font-size: .9rem; font-weight: 600; color: var(--navy); line-height: 1.2; }
+.radio-desc  { font-size: .78rem; color: var(--muted); line-height: 1.4; }
+
+/* Color Picker Row */
+.color-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.color-field {
+  display: flex; flex-direction: column; gap: .4rem;
+}
+.color-input-wrap {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .6rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--white);
+  transition: border-color .2s;
+}
+.color-input-wrap:focus-within { border-color: var(--gold); }
+input[type="color"] {
+  width: 36px; height: 36px;
+  border: none; padding: 0;
+  border-radius: 6px; cursor: pointer;
+  background: none;
+}
+.color-hex {
+  flex: 1; border: none; background: none;
+  font-family: var(--font-b); font-size: .9rem;
+  color: var(--text); padding: 0;
+  box-shadow: none !important;
+}
+.color-hex:focus { outline: none; }
+
+/* Tags / Checkboxes inline */
+.tag-grid {
+  display: flex; flex-wrap: wrap; gap: .6rem;
+  margin-bottom: 1.25rem;
+}
+.tag-check {
+  position: relative;
+  cursor: pointer;
+}
+.tag-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+.tag-label {
+  display: block;
+  padding: .4rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-size: .83rem; font-weight: 500;
+  color: var(--muted);
+  background: var(--white);
+  transition: all .2s;
+  cursor: pointer;
+  user-select: none;
+}
+.tag-check input:checked + .tag-label {
+  border-color: var(--gold);
+  background: var(--gold-pale);
+  color: var(--navy);
+  font-weight: 600;
+}
+
+/* Range Slider */
+.range-wrap { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.25rem; }
+.range-labels { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); }
+input[type="range"] {
+  width: 100%; height: 6px;
+  border-radius: 3px;
+  background: var(--cream-d);
+  outline: none; cursor: pointer;
+  border: none; padding: 0;
+  accent-color: var(--gold);
+  box-shadow: none;
+}
+
+/* Textarea Big */
+.textarea-big { min-height: 120px; }
+
+/* ---------- Navigation Buttons ---------- */
+.nav-btns {
+  display: flex; justify-content: space-between;
+  align-items: center; gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .8rem 1.75rem;
+  border-radius: var(--r);
+  font-family: var(--font-b);
+  font-size: .9rem; font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer; transition: all .25s var(--ease);
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--gold); color: var(--navy); border-color: var(--gold);
+}
+.btn-primary:hover {
+  background: var(--gold-l); transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(196,154,60,.3);
+}
+.btn-secondary {
+  background: transparent; color: var(--muted);
+  border-color: var(--border);
+}
+.btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
+
+.step-counter {
+  font-size: .8rem; color: var(--muted);
+  font-weight: 500;
+}
+
+/* ---------- RESULT STEP ---------- */
+.result-box {
+  background: var(--navy);
+  border-radius: var(--r);
+  padding: 2rem;
+  position: relative;
+}
+.result-label {
+  font-size: .72rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+  display: block;
+}
+#prompt-output {
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  line-height: 1.65;
+  color: rgba(248,244,238,.85);
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: .5rem;
+}
+#prompt-output::-webkit-scrollbar { width: 4px; }
+#prompt-output::-webkit-scrollbar-track { background: rgba(255,255,255,.05); }
+#prompt-output::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+.copy-btn {
+  position: absolute; top: 1rem; right: 1rem;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: white; border-radius: 8px;
+  padding: .4rem .9rem;
+  font-family: var(--font-b);
+  font-size: .78rem; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: .4rem;
+}
+.copy-btn:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+.copy-btn.copied { background: #2e7d32; border-color: #2e7d32; color: white; }
+
+.result-actions {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.tip-box {
+  background: rgba(196,154,60,.08);
+  border: 1px solid rgba(196,154,60,.2);
+  border-radius: var(--r);
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+}
+.tip-box h4 {
+  font-family: var(--font-d);
+  font-size: 1rem; font-weight: 700;
+  color: var(--navy); margin-bottom: .4rem;
+}
+.tip-box p {
+  font-size: .85rem; color: var(--muted); line-height: 1.6;
+}
+.tip-box strong { color: var(--navy); }
+
+/* ---------- Danke-Seite (Step 6) ---------- */
+.thankyou-wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 1rem 0 3rem;
+}
+
+.thankyou-icon {
+  margin: 0 auto 2rem;
+  display: flex; justify-content: center;
+}
+.check-path {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: drawCheck .6s .2s var(--ease) forwards;
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.thankyou-title {
+  font-family: var(--font-d);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 1rem;
+}
+.thankyou-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+.thankyou-sub strong { color: var(--navy); }
+
+.thankyou-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+.ty-step {
+  display: flex; align-items: flex-start; gap: 1rem;
+}
+.ty-step-num {
+  width: 32px; height: 32px;
+  background: var(--gold); color: var(--navy);
+  border-radius: 50%; display: grid;
+  place-items: center; font-weight: 700;
+  font-size: .85rem; flex-shrink: 0;
+}
+.ty-step strong {
+  display: block; font-size: .95rem;
+  color: var(--navy); margin-bottom: .15rem;
+}
+.ty-step p { font-size: .85rem; color: var(--muted); margin: 0; }
+
+.thankyou-contact {
+  display: flex; flex-direction: column;
+  align-items: center; gap: .6rem;
+}
+.thankyou-contact p { font-size: .85rem; color: var(--muted); }
+.ty-link {
+  font-size: .92rem; font-weight: 600;
+  color: var(--navy); text-decoration: none;
+  transition: color .2s;
+}
+.ty-link:hover { color: var(--gold); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .p-label { display: none; }
+  .field-grid { grid-template-columns: 1fr; }
+  .radio-grid-2, .radio-grid-3 { grid-template-columns: 1fr; }
+  .color-row { grid-template-columns: 1fr; }
+  .wizard-main { padding: 2rem 1.25rem; }
+  .topbar-title { display: none; }
+}
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <a href="index.html" class="logo">
+    <span class="logo-mark">MW</span>
+    <span>MyWeb<strong>Profi</strong></span>
+  </a>
+  <span class="topbar-title">Kunden-Fragebogen</span>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-steps" id="progress-steps">
+    <div class="p-step active" data-step="1">
+      <div class="p-dot"><span class="p-dot-num">1</span></div>
+      <span class="p-label">Unternehmen</span>
+    </div>
+    <div class="p-step" data-step="2">
+      <div class="p-dot"><span class="p-dot-num">2</span></div>
+      <span class="p-label">Webseite</span>
+    </div>
+    <div class="p-step" data-step="3">
+      <div class="p-dot"><span class="p-dot-num">3</span></div>
+      <span class="p-label">Design</span>
+    </div>
+    <div class="p-step" data-step="4">
+      <div class="p-dot"><span class="p-dot-num">4</span></div>
+      <span class="p-label">Inhalte</span>
+    </div>
+    <div class="p-step" data-step="5">
+      <div class="p-dot"><span class="p-dot-num">5</span></div>
+      <span class="p-label">Ziel</span>
+    </div>
+    <div class="p-step" data-step="6">
+      <div class="p-dot"><span class="p-dot-num">6</span></div>
+      <span class="p-label">Prompt</span>
+    </div>
+  </div>
+</div>
+
+<!-- Wizard -->
+<main class="wizard-main">
+
+  <!-- ===== SCHRITT 1: Unternehmen ===== -->
+  <div class="step active" id="step-1">
+    <div class="step-header">
+      <span class="step-label">Schritt 1 von 5</span>
+      <h2>Erzählen Sie mir von Ihrem Unternehmen</h2>
+      <p>Diese Angaben helfen mir, Ihre Webseite optimal auf Ihr Business abzustimmen.</p>
+    </div>
+
+    <div class="field-grid">
+      <div class="field">
+        <label for="f-firma">Firmenname / Ihr Name</label>
+        <input type="text" id="f-firma" placeholder="z.B. Tischlerei Huber" />
+      </div>
+      <div class="field">
+        <label for="f-branche">Branche</label>
+        <select id="f-branche">
+          <option value="">Bitte wählen…</option>
+          <option>Handwerk & Bau</option>
+          <option>Gastronomie & Catering</option>
+          <option>Beauty & Wellness</option>
+          <option>Gesundheit & Medizin</option>
+          <option>Recht & Beratung</option>
+          <option>Fitness & Sport</option>
+          <option>Immobilien</option>
+          <option>IT & Technik</option>
+          <option>Handel & E-Commerce</option>
+          <option>Dienstleistungen</option>
+          <option>Kunst & Kreativ</option>
+          <option>Bildung & Coaching</option>
+          <option>Landwirtschaft</option>
+          <option>Transport & Logistik</option>
+          <option>Sonstiges</option>
+        </select>
+      </div>
+      <div class="field field-full">
+        <label for="f-beschreibung">Kurze Beschreibung der Tätigkeit</label>
+        <textarea id="f-beschreibung" placeholder="Was machen Sie genau? Was bieten Sie an? Was macht Sie besonders?"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-standort">Standort / Stadt</label>
+        <input type="text" id="f-standort" placeholder="z.B. Wien, Graz, Linz…" />
+      </div>
+      <div class="field">
+        <label for="f-kontakt">Ansprechperson & Kontakt <span class="opt">(optional)</span></label>
+        <input type="text" id="f-kontakt" placeholder="Mag. Muster, 0699 12345" />
+      </div>
+      <div class="field field-full">
+        <label for="f-bestehend">Bestehende Webseite (falls vorhanden) <span class="opt">(optional)</span></label>
+        <input type="url" id="f-bestehend" placeholder="https://beispiel.at" />
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <div></div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="step-counter">1 / 5</span>
+        <button class="btn btn-primary" onclick="goTo(2)">
+          Weiter
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHRITT 2: Webseiten-Art ===== -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <span class="step-label">Schritt 2 von 5</span>
+      <h2>Welche Art Webseite wünschen Sie?</h2>
+      <p>Wählen Sie den Typ und die gewünschten Seiten aus.</p>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Webseiten-Typ</label>
+      <div class="radio-grid radio-grid-2">
+        <label class="radio-card">
+          <input type="radio" name="typ" value="Onepager (alles auf einer Seite)" checked />
+          <div class="radio-label">
+            <span class="radio-icon">📄</span>
+            <div class="radio-text">
+              <span class="radio-title">Onepager</span>
+              <span class="radio-desc">Alles auf einer langen Seite – ideal für Einzel­unter­nehmer</span>
+            </div>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="typ" value="Unternehmenswebsite (mehrere Unterseiten)" />
+          <div class="radio-label">
+            <span class="radio-icon">🏢</span>
+            <div class="radio-text">
+              <span class="radio-title">Unternehmenswebsite</span>
+              <span class="radio-desc">Mehrere Unterseiten – für etablierte Betriebe</span>
+            </div>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="typ" value="Landingpage (Kampagnen/Aktions-Seite)" />
+          <div class="radio-label">
+            <span class="radio-icon">🎯</span>
+            <div class="radio-text">
+              <span class="radio-title">Landingpage</span>
+              <span class="radio-desc">Eine Seite für ein spezifisches Angebot oder eine Kampagne</span>
+            </div>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="typ" value="Portfolio-Website" />
+          <div class="radio-label">
+            <span class="radio-icon">🎨</span>
+            <div class="radio-text">
+              <span class="radio-title">Portfolio</span>
+              <span class="radio-desc">Arbeiten & Referenzen präsentieren</span>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Gewünschte Unterseiten / Bereiche <span class="opt">(alle die zutreffen)</span></label>
+      <div class="tag-grid" id="seiten-tags">
+        <label class="tag-check"><input type="checkbox" value="Startseite / Hero" checked /><span class="tag-label">🏠 Startseite</span></label>
+        <label class="tag-check"><input type="checkbox" value="Über uns / Über mich" /><span class="tag-label">👤 Über uns</span></label>
+        <label class="tag-check"><input type="checkbox" value="Leistungen / Angebote" /><span class="tag-label">⚙️ Leistungen</span></label>
+        <label class="tag-check"><input type="checkbox" value="Preise / Pakete" /><span class="tag-label">💶 Preise</span></label>
+        <label class="tag-check"><input type="checkbox" value="Kontakt" /><span class="tag-label">✉️ Kontakt</span></label>
+        <label class="tag-check"><input type="checkbox" value="Galerie / Portfolio" /><span class="tag-label">🖼️ Galerie</span></label>
+        <label class="tag-check"><input type="checkbox" value="Blog / News" /><span class="tag-label">📝 Blog</span></label>
+        <label class="tag-check"><input type="checkbox" value="Team-Vorstellung" /><span class="tag-label">👥 Team</span></label>
+        <label class="tag-check"><input type="checkbox" value="FAQ" /><span class="tag-label">❓ FAQ</span></label>
+        <label class="tag-check"><input type="checkbox" value="Referenzen / Bewertungen" /><span class="tag-label">⭐ Referenzen</span></label>
+        <label class="tag-check"><input type="checkbox" value="Impressum & Datenschutz" checked /><span class="tag-label">⚖️ Impressum / Datenschutz</span></label>
+        <label class="tag-check"><input type="checkbox" value="Shop / E-Commerce (Grundstruktur)" /><span class="tag-label">🛒 Shop</span></label>
+      </div>
+    </div>
+
+    <div class="field-grid">
+      <div class="field">
+        <label for="f-paket">Gewünschtes Paket</label>
+        <select id="f-paket">
+          <option value="Noch unklar">Noch unklar</option>
+          <option value="Starter (Onepager, ab 499€)">Starter (ab 499€)</option>
+          <option value="Professional (bis 5 Seiten, ab 899€)">Professional (ab 899€)</option>
+          <option value="Premium (unbegrenzt, ab 1.499€)">Premium (ab 1.499€)</option>
+          <option value="Nur Wartung / Pflege">Nur Wartung</option>
+          <option value="Redesign der bestehenden Webseite">Redesign</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-deadline">Gewünschter Fertigstellungs-Termin</label>
+        <input type="text" id="f-deadline" placeholder="z.B. Ende des Monats, asap, 15.06." />
+      </div>
+      <div class="field field-full">
+        <label for="f-logo">Logo & Markenmaterial vorhanden?</label>
+        <select id="f-logo">
+          <option value="Logo vorhanden (wird geliefert)">Ja, Logo vorhanden</option>
+          <option value="Logo vorhanden, aber Farben/Fonts unbekannt">Logo vorhanden, Farben/Fonts unbekannt</option>
+          <option value="Kein Logo – bitte einfaches Text-Logo erstellen">Kein Logo – Text-Logo bitte erstellen</option>
+          <option value="Kein Logo – Logo-Design separat anfragen">Kein Logo – will Logo-Design separat anfragen</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Zurück</button>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="step-counter">2 / 5</span>
+        <button class="btn btn-primary" onclick="goTo(3)">Weiter →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHRITT 3: Design ===== -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <span class="step-label">Schritt 3 von 5</span>
+      <h2>Design, Farben & Stil</h2>
+      <p>Wie soll Ihre Webseite aussehen und welche Gefühle soll sie auslösen?</p>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Stilrichtung</label>
+      <div class="radio-grid radio-grid-3">
+        <label class="radio-card"><input type="radio" name="stil" value="Modern & Clean (viel Weißraum, klare Linien)" /><div class="radio-label"><span class="radio-icon">✨</span><div class="radio-text"><span class="radio-title">Modern & Clean</span><span class="radio-desc">Viel Weißraum, klare Linien</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="stil" value="Klassisch & Seriös (traditionell, vertrauenswürdig)" checked /><div class="radio-label"><span class="radio-icon">🏛️</span><div class="radio-text"><span class="radio-title">Klassisch & Seriös</span><span class="radio-desc">Traditionell, vertrauenswürdig</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="stil" value="Mutig & Farbenfroh (lebhaft, auffällig)" /><div class="radio-label"><span class="radio-icon">🎨</span><div class="radio-text"><span class="radio-title">Mutig & Farbenfroh</span><span class="radio-desc">Lebhaft und auffällig</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="stil" value="Minimalistisch (sehr schlicht, fast textlos)" /><div class="radio-label"><span class="radio-icon">⬜</span><div class="radio-text"><span class="radio-title">Minimalistisch</span><span class="radio-desc">Sehr schlicht, wenig Ablenkung</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="stil" value="Luxuriös & Edel (dunkel, premium)" /><div class="radio-label"><span class="radio-icon">💎</span><div class="radio-text"><span class="radio-title">Luxuriös & Edel</span><span class="radio-desc">Dunkel, premium, hochwertig</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="stil" value="Natürlich & Organisch (Erdtöne, Nachhaltigkeit)" /><div class="radio-label"><span class="radio-icon">🌿</span><div class="radio-text"><span class="radio-title">Natürlich & Organisch</span><span class="radio-desc">Erdtöne, Nachhaltigkeit</span></div></div></label>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+      <label style="margin-bottom:.75rem;display:block;">Welche Eigenschaften soll die Webseite ausstrahlen? <span class="opt">(alle die passen)</span></label>
+      <div class="tag-grid">
+        <label class="tag-check"><input type="checkbox" value="Vertrauen" /><span class="tag-label">🤝 Vertrauen</span></label>
+        <label class="tag-check"><input type="checkbox" value="Kompetenz" /><span class="tag-label">🎓 Kompetenz</span></label>
+        <label class="tag-check"><input type="checkbox" value="Freundlichkeit" /><span class="tag-label">😊 Freundlichkeit</span></label>
+        <label class="tag-check"><input type="checkbox" value="Kreativität" /><span class="tag-label">💡 Kreativität</span></label>
+        <label class="tag-check"><input type="checkbox" value="Exklusivität" /><span class="tag-label">✨ Exklusivität</span></label>
+        <label class="tag-check"><input type="checkbox" value="Modernität" /><span class="tag-label">🚀 Modernität</span></label>
+        <label class="tag-check"><input type="checkbox" value="Regionalität / Heimatverbundenheit" /><span class="tag-label">🇦🇹 Regionalität</span></label>
+        <label class="tag-check"><input type="checkbox" value="Nachhaltigkeit" /><span class="tag-label">♻️ Nachhaltigkeit</span></label>
+        <label class="tag-check"><input type="checkbox" value="Preiswürdigkeit / Fairness" /><span class="tag-label">💶 Fairness</span></label>
+        <label class="tag-check"><input type="checkbox" value="Innovation" /><span class="tag-label">⚡ Innovation</span></label>
+      </div>
+    </div>
+
+    <div class="color-row">
+      <div class="color-field">
+        <label>Hauptfarbe (Primärfarbe)</label>
+        <div class="color-input-wrap">
+          <input type="color" id="f-farbe1" value="#1C3059" />
+          <input type="text" class="color-hex" id="f-farbe1-hex" value="#1C3059" maxlength="7" placeholder="#000000" />
+        </div>
+      </div>
+      <div class="color-field">
+        <label>Akzentfarbe <span class="opt">(optional)</span></label>
+        <div class="color-input-wrap">
+          <input type="color" id="f-farbe2" value="#C49A3C" />
+          <input type="text" class="color-hex" id="f-farbe2-hex" value="#C49A3C" maxlength="7" placeholder="#000000" />
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Hintergrund-Stil</label>
+      <div class="radio-grid radio-grid-3">
+        <label class="radio-card"><input type="radio" name="bg" value="Hell (weißer/heller Hintergrund)" checked /><div class="radio-label" style="justify-content:center;text-align:center;"><div class="radio-text"><span class="radio-title">☀️ Hell</span><span class="radio-desc">Weißer/heller Hintergrund</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="bg" value="Dunkel (dunkler/nächtlicher Hintergrund)" /><div class="radio-label" style="justify-content:center;text-align:center;"><div class="radio-text"><span class="radio-title">🌙 Dunkel</span><span class="radio-desc">Dunkler / nächtlicher Look</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="bg" value="Gemischt (hell + dunkle Abschnitte)" /><div class="radio-label" style="justify-content:center;text-align:center;"><div class="radio-text"><span class="radio-title">⚖️ Gemischt</span><span class="radio-desc">Hell & Dunkel kombiniert</span></div></div></label>
+      </div>
+    </div>
+
+    <div class="field-grid">
+      <div class="field">
+        <label for="f-insp1">Webseite als Inspiration #1 <span class="opt">(optional)</span></label>
+        <input type="url" id="f-insp1" placeholder="https://beispiel.com" />
+      </div>
+      <div class="field">
+        <label for="f-insp2">Webseite als Inspiration #2 <span class="opt">(optional)</span></label>
+        <input type="url" id="f-insp2" placeholder="https://beispiel.com" />
+      </div>
+      <div class="field field-full">
+        <label for="f-design-notizen">Besondere Design-Wünsche <span class="opt">(optional)</span></label>
+        <textarea id="f-design-notizen" placeholder="z.B. 'Ähnlich wie Konkurrent X aber moderner', 'Unbedingt viele Fotos', 'Kein Rot', …"></textarea>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Zurück</button>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="step-counter">3 / 5</span>
+        <button class="btn btn-primary" onclick="goTo(4)">Weiter →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHRITT 4: Inhalte & Features ===== -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <span class="step-label">Schritt 4 von 5</span>
+      <h2>Inhalte & Funktionen</h2>
+      <p>Was soll Ihre Webseite können? Was liefert der Kunde, was übernehme ich?</p>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Gewünschte Funktionen / Features <span class="opt">(alle die zutreffen)</span></label>
+      <div class="tag-grid">
+        <label class="tag-check"><input type="checkbox" value="Kontaktformular" /><span class="tag-label">✉️ Kontaktformular</span></label>
+        <label class="tag-check"><input type="checkbox" value="Google Maps Karte" /><span class="tag-label">📍 Google Maps</span></label>
+        <label class="tag-check"><input type="checkbox" value="WhatsApp-Button" /><span class="tag-label">💬 WhatsApp-Button</span></label>
+        <label class="tag-check"><input type="checkbox" value="Foto-Galerie / Bildergalerie" /><span class="tag-label">🖼️ Bildergalerie</span></label>
+        <label class="tag-check"><input type="checkbox" value="Slider / Carousel" /><span class="tag-label">🎠 Slider</span></label>
+        <label class="tag-check"><input type="checkbox" value="Testimonials / Kundenstimmen" /><span class="tag-label">⭐ Testimonials</span></label>
+        <label class="tag-check"><input type="checkbox" value="Newsletter-Anmeldung" /><span class="tag-label">📧 Newsletter</span></label>
+        <label class="tag-check"><input type="checkbox" value="Online-Buchung / Terminvereinbarung" /><span class="tag-label">📅 Online-Buchung</span></label>
+        <label class="tag-check"><input type="checkbox" value="Preistabelle / Pakete" /><span class="tag-label">💶 Preistabelle</span></label>
+        <label class="tag-check"><input type="checkbox" value="Animationen & Scroll-Effekte" /><span class="tag-label">✨ Animationen</span></label>
+        <label class="tag-check"><input type="checkbox" value="Google Analytics / Tracking" /><span class="tag-label">📊 Analytics</span></label>
+        <label class="tag-check"><input type="checkbox" value="Cookie-Banner (DSGVO)" /><span class="tag-label">🍪 Cookie-Banner</span></label>
+        <label class="tag-check"><input type="checkbox" value="Mehrsprachigkeit (DE/EN)" /><span class="tag-label">🌍 Mehrsprachigkeit</span></label>
+        <label class="tag-check"><input type="checkbox" value="Downloadbereich (z.B. PDFs)" /><span class="tag-label">📥 Downloads</span></label>
+        <label class="tag-check"><input type="checkbox" value="Instagram-Feed-Einbindung" /><span class="tag-label">📸 Instagram-Feed</span></label>
+        <label class="tag-check"><input type="checkbox" value="Live-Chat (z.B. Tidio)" /><span class="tag-label">💭 Live-Chat</span></label>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Liefert der Kunde eigene Texte?</label>
+      <div class="radio-grid radio-grid-3">
+        <label class="radio-card"><input type="radio" name="texte" value="Ja – Texte werden vollständig geliefert" /><div class="radio-label" style="justify-content:center;"><div class="radio-text"><span class="radio-title">✅ Ja, vollständig</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="texte" value="Teilweise – Grundinfos geliefert, Rest bitte erstellen" checked /><div class="radio-label" style="justify-content:center;"><div class="radio-text"><span class="radio-title">🟡 Teilweise</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="texte" value="Nein – bitte professionelle Platzhaltertexte erstellen" /><div class="radio-label" style="justify-content:center;"><div class="radio-text"><span class="radio-title">❌ Nein</span></div></div></label>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Liefert der Kunde eigene Fotos?</label>
+      <div class="radio-grid radio-grid-3">
+        <label class="radio-card"><input type="radio" name="fotos" value="Ja – professionelle Fotos werden geliefert" /><div class="radio-label" style="justify-content:center;"><div class="radio-text"><span class="radio-title">📷 Ja, eigene Fotos</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="fotos" value="Stockfotos sind in Ordnung" checked /><div class="radio-label" style="justify-content:center;"><div class="radio-text"><span class="radio-title">🖼️ Stockfotos ok</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="fotos" value="Mischung aus eigenen Fotos und Stockfotos" /><div class="radio-label" style="justify-content:center;"><div class="radio-text"><span class="radio-title">🔀 Beides kombinieren</span></div></div></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="f-besonderheiten">Besondere Inhalts-Wünsche oder spezielle Anforderungen <span class="opt">(optional)</span></label>
+      <textarea id="f-besonderheiten" class="textarea-big" placeholder="z.B. 'Wir haben 5 Mitarbeiter die vorgestellt werden sollen', 'Es gibt eine spezielle Maschine die wir zeigen wollen', 'Wir brauchen eine Anfahrtsbeschreibung', …"></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(3)">← Zurück</button>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="step-counter">4 / 5</span>
+        <button class="btn btn-primary" onclick="goTo(5)">Weiter →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHRITT 5: Zielgruppe & Ziel ===== -->
+  <div class="step" id="step-5">
+    <div class="step-header">
+      <span class="step-label">Schritt 5 von 5</span>
+      <h2>Zielgruppe & Ziel der Webseite</h2>
+      <p>Wer soll die Seite besuchen und was soll sie erreichen?</p>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="margin-bottom:.75rem;display:block;">Hauptziel der Webseite</label>
+      <div class="radio-grid radio-grid-2">
+        <label class="radio-card"><input type="radio" name="ziel" value="Telefonanrufe / Anfragen generieren" checked /><div class="radio-label"><span class="radio-icon">📞</span><div class="radio-text"><span class="radio-title">Anrufe & Anfragen</span><span class="radio-desc">Kunden sollen anrufen oder schreiben</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="ziel" value="Online-Sichtbarkeit / Gefunden werden" /><div class="radio-label"><span class="radio-icon">🔍</span><div class="radio-text"><span class="radio-title">Sichtbarkeit / SEO</span><span class="radio-desc">Bei Google gefunden werden</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="ziel" value="Vertrauen aufbauen / Seriösität zeigen" /><div class="radio-label"><span class="radio-icon">🤝</span><div class="radio-text"><span class="radio-title">Vertrauen aufbauen</span><span class="radio-desc">Professioneller Auftritt, Glaubwürdigkeit</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="ziel" value="Produkte / Leistungen vorstellen" /><div class="radio-label"><span class="radio-icon">🛒</span><div class="radio-text"><span class="radio-title">Produkte vorstellen</span><span class="radio-desc">Sortiment oder Leistungen zeigen</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="ziel" value="Online-Buchungen / Termine entgegennehmen" /><div class="radio-label"><span class="radio-icon">📅</span><div class="radio-text"><span class="radio-title">Online-Buchungen</span><span class="radio-desc">Kunden können direkt buchen</span></div></div></label>
+        <label class="radio-card"><input type="radio" name="ziel" value="Marke / Image aufbauen" /><div class="radio-label"><span class="radio-icon">⭐</span><div class="radio-text"><span class="radio-title">Marke aufbauen</span><span class="radio-desc">Langfristiges Branding & Wiedererkennung</span></div></div></label>
+      </div>
+    </div>
+
+    <div class="field-grid">
+      <div class="field">
+        <label for="f-zielgruppe">Zielgruppe beschreiben</label>
+        <input type="text" id="f-zielgruppe" placeholder="z.B. Familien in Wien, Unternehmen ab 10 MA, Senioren…" />
+      </div>
+      <div class="field">
+        <label for="f-reichweite">Geografische Reichweite</label>
+        <select id="f-reichweite">
+          <option>Lokal (eine Stadt / Bezirk)</option>
+          <option>Regional (Bundesland)</option>
+          <option>Österreichweit</option>
+          <option>Deutschland, AT, CH (DACH)</option>
+          <option>International</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-konkurrenz">Mitbewerber / Wettbewerber <span class="opt">(optional)</span></label>
+        <input type="text" id="f-konkurrenz" placeholder="z.B. Firma X, Firma Y in der Region" />
+      </div>
+      <div class="field">
+        <label for="f-alleinstellung">Was unterscheidet Sie von der Konkurrenz? <span class="opt">(optional)</span></label>
+        <input type="text" id="f-alleinstellung" placeholder="z.B. 24h-Service, 20 Jahre Erfahrung, günstigste Preise…" />
+      </div>
+      <div class="field field-full">
+        <label for="f-sonstiges">Noch etwas Wichtiges? <span class="opt">(optional)</span></label>
+        <textarea id="f-sonstiges" placeholder="Alles was ich noch wissen sollte – kein Detail ist zu klein!"></textarea>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(4)">← Zurück</button>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="step-counter">5 / 5</span>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">
+          <span id="submit-btn-text">Anfrage absenden</span>
+          <svg id="submit-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg id="submit-spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none;animation:spin .8s linear infinite"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="28" stroke-dashoffset="10" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHRITT 6: Danke-Seite (Kunden-Ansicht) ===== -->
+  <div class="step" id="step-6">
+    <div class="thankyou-wrap">
+      <div class="thankyou-icon" aria-hidden="true">
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+          <circle cx="40" cy="40" r="38" stroke="#C49A3C" stroke-width="2" opacity="0.3"/>
+          <circle cx="40" cy="40" r="30" fill="#C49A3C" opacity="0.12"/>
+          <path d="M24 40l10 10 22-22" stroke="#C49A3C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="check-path"/>
+        </svg>
+      </div>
+      <h2 class="thankyou-title">Vielen Dank für Ihre Anfrage!</h2>
+      <p class="thankyou-sub">
+        Ihre Angaben wurden erfolgreich übermittelt.<br />
+        Wir melden uns in der Regel <strong>innerhalb von 24 Stunden</strong> bei Ihnen.
+      </p>
+
+      <div class="thankyou-steps">
+        <div class="ty-step">
+          <span class="ty-step-num">1</span>
+          <div>
+            <strong>Wir prüfen Ihre Angaben</strong>
+            <p>Unser Team schaut sich Ihren Wunsch genau an.</p>
+          </div>
+        </div>
+        <div class="ty-step">
+          <span class="ty-step-num">2</span>
+          <div>
+            <strong>Sie erhalten ein Angebot</strong>
+            <p>Wir senden Ihnen ein transparentes, unverbindliches Angebot.</p>
+          </div>
+        </div>
+        <div class="ty-step">
+          <span class="ty-step-num">3</span>
+          <div>
+            <strong>Ihre Webseite geht live</strong>
+            <p>Nach Freigabe setzen wir Ihre Webseite schnell und professionell um.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="thankyou-contact">
+        <p>Fragen? Erreichen Sie uns direkt:</p>
+        <a href="mailto:office@mywebprofi.at" class="ty-link">✉ office@mywebprofi.at</a>
+        <a href="tel:+4369911234567" class="ty-link">☎ +43 699 1234 567</a>
+      </div>
+
+      <button class="btn btn-secondary" style="margin-top:2rem;" onclick="resetForm()">
+        Neue Anfrage starten
+      </button>
+    </div>
+
+    <!-- Versteckt: Prompt-Ausgabe (nur intern, nie sichtbar) -->
+    <pre id="prompt-output" style="display:none;visibility:hidden;position:absolute;left:-9999px;" aria-hidden="true"></pre>
+  </div>
+
+</main>
+
+<script>
+/* =====================================================
+   WIZARD LOGIC
+   ===================================================== */
+
+let currentStep = 1;
+const TOTAL = 5; // Schritt 6 = Ergebnis, kein echter Step
+
+function goTo(n) {
+  // Step verstecken
+  document.querySelector(`.step.active`)?.classList.remove('active');
+  document.getElementById(`step-${n}`).classList.add('active');
+
+  // Progress aktualisieren
+  document.querySelectorAll('.p-step').forEach((el, i) => {
+    const s = i + 1;
+    el.classList.toggle('active', s === n);
+    el.classList.toggle('done', s < n);
+  });
+
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =====================================================
+   COLOR PICKER SYNC
+   ===================================================== */
+
+function syncColor(pickerId, hexId) {
+  const picker = document.getElementById(pickerId);
+  const hex    = document.getElementById(hexId);
+  if (!picker || !hex) return;
+
+  picker.addEventListener('input', () => { hex.value = picker.value; });
+  hex.addEventListener('input', () => {
+    if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) {
+      picker.value = hex.value;
+    }
+  });
+}
+syncColor('f-farbe1', 'f-farbe1-hex');
+syncColor('f-farbe2', 'f-farbe2-hex');
+
+/* =====================================================
+   CHECKED TAGS HELPER
+   ===================================================== */
+
+function getChecked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+    .map(el => el.value).join(', ') || '–';
+}
+
+function getCheckedCheckboxes(containerSelector) {
+  return [...document.querySelectorAll(`${containerSelector} input[type="checkbox"]:checked`)]
+    .map(el => el.value);
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? (el.value.trim() || '–') : '–';
+}
+
+/* =====================================================
+   FORMSPREE ENDPOINT
+   ─────────────────────────────────────────────────────
+   SETUP (einmalig, 2 Minuten):
+   1. Gehen Sie zu https://formspree.io und registrieren Sie sich kostenlos
+   2. Klicken Sie auf „New Form" → Name: „MyWebProfi Kundenbrief"
+   3. Geben Sie als E-Mail ein: steinit84@gmail.com
+   4. Kopieren Sie die Form-ID (z.B. „xrgjabnk") und ersetzen Sie
+      IHRE_FORMSPREE_ID unten damit
+   ===================================================== */
+  const FORMSPREE_ID = 'IHRE_FORMSPREE_ID'; // ← hier ersetzen!
+
+/* =====================================================
+   SUBMIT: Prompt generieren + per Formspree senden
+   ===================================================== */
+
+async function submitForm() {
+  const btn     = document.getElementById('submit-btn');
+  const btnText = document.getElementById('submit-btn-text');
+  const icon    = document.getElementById('submit-icon');
+  const spinner = document.getElementById('submit-spinner');
+
+  // Ladestate
+  btn.disabled   = true;
+  btnText.textContent = 'Wird gesendet…';
+  icon.style.display    = 'none';
+  spinner.style.display = 'block';
+
+  // ── 1. Prompt intern aufbauen (unsichtbar für Kunden) ──
+  const prompt = buildPrompt();
+  document.getElementById('prompt-output').textContent = prompt;
+
+  // ── 2. Formulardaten für Formspree zusammenstellen ──
+  const formData = new FormData();
+  formData.append('_subject', `🌐 Neue Webseiten-Anfrage: ${val('f-firma')} (${val('f-branche')})`);
+  formData.append('_replyto', val('f-kontakt'));
+  formData.append('kunde_firma',    val('f-firma'));
+  formData.append('kunde_branche',  val('f-branche'));
+  formData.append('kunde_standort', val('f-standort'));
+  formData.append('kunde_kontakt',  val('f-kontakt'));
+  formData.append('paket',          val('f-paket'));
+  formData.append('deadline',       val('f-deadline'));
+  // Vollständiger Prompt als ein Feld → das ist was Sie in Claude einfügen
+  formData.append('WEBSEITEN_PROMPT', prompt);
+
+  // ── 3. An Formspree senden ──
+  try {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method:  'POST',
+      body:    formData,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (res.ok) {
+      // Erfolg → Danke-Seite anzeigen
+      goTo(6);
+    } else {
+      // Formspree-Fehler (z.B. ID noch nicht gesetzt)
+      handleSubmitError(btn, btnText, icon, spinner);
+    }
+  } catch (_) {
+    // Netzwerk-Fehler oder FORMSPREE_ID noch nicht eingetragen → Demo-Modus
+    if (FORMSPREE_ID === 'IHRE_FORMSPREE_ID') {
+      // Demo: Danke-Seite trotzdem anzeigen damit Sie testen können
+      console.warn('⚠️ Formspree-ID nicht gesetzt. Bitte IHRE_FORMSPREE_ID ersetzen!');
+      goTo(6);
+    } else {
+      handleSubmitError(btn, btnText, icon, spinner);
+    }
+  }
+}
+
+function handleSubmitError(btn, btnText, icon, spinner) {
+  btn.disabled = false;
+  btnText.textContent = 'Erneut versuchen';
+  icon.style.display    = 'block';
+  spinner.style.display = 'none';
+  alert('Es gab einen Fehler beim Senden. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt unter office@mywebprofi.at');
+}
+
+/* =====================================================
+   PROMPT BUILDER (intern – Kunde sieht das nie)
+   ===================================================== */
+
+function buildPrompt() {
+  const allFeatures     = getCheckedCheckboxes('#step-4 .tag-grid');
+  const allAusstrahlung = getCheckedCheckboxes('#step-3 .tag-grid');
+
+  return `# WEBSEITEN-AUFTRAG – MyWebProfi Kundenbrief
+${'='.repeat(60)}
+
+## 📋 UNTERNEHMEN & KUNDE
+- **Firma / Name:** ${val('f-firma')}
+- **Branche:** ${val('f-branche')}
+- **Standort:** ${val('f-standort')}
+- **Ansprechperson:** ${val('f-kontakt')}
+- **Tätigkeits-Beschreibung:**
+  ${val('f-beschreibung')}
+- **Bestehende Webseite:** ${val('f-bestehend')}
+
+## 🌐 ART DER WEBSEITE
+- **Typ:** ${getChecked('typ')}
+- **Gewünschte Seiten/Bereiche:** ${getCheckedCheckboxes('#seiten-tags').join(', ') || '–'}
+- **Paket:** ${val('f-paket')}
+- **Deadline:** ${val('f-deadline')}
+- **Logo-Situation:** ${val('f-logo')}
+
+## 🎨 DESIGN & STIL
+- **Stilrichtung:** ${getChecked('stil')}
+- **Gewünschte Ausstrahlung:** ${allAusstrahlung.join(', ') || '–'}
+- **Primärfarbe:** ${val('f-farbe1-hex')}
+- **Akzentfarbe:** ${val('f-farbe2-hex')}
+- **Hintergrund-Stil:** ${getChecked('bg')}
+- **Inspiration #1:** ${val('f-insp1')}
+- **Inspiration #2:** ${val('f-insp2')}
+- **Design-Notizen:** ${val('f-design-notizen')}
+
+## ⚙️ FUNKTIONEN & FEATURES
+${allFeatures.length > 0 ? allFeatures.map(f => `- ✅ ${f}`).join('\n') : '- Keine spezifischen Features gewünscht'}
+
+## 📝 INHALTE
+- **Texte:** ${getChecked('texte')}
+- **Fotos:** ${getChecked('fotos')}
+- **Besonderheiten:**
+  ${val('f-besonderheiten')}
+
+## 🎯 ZIEL & ZIELGRUPPE
+- **Hauptziel:** ${getChecked('ziel')}
+- **Zielgruppe:** ${val('f-zielgruppe')}
+- **Geografische Reichweite:** ${val('f-reichweite')}
+- **Mitbewerber:** ${val('f-konkurrenz')}
+- **Alleinstellungsmerkmal:** ${val('f-alleinstellung')}
+- **Sonstiges:** ${val('f-sonstiges')}
+
+${'='.repeat(60)}
+## 🤖 AUFGABE FÜR CLAUDE
+
+Bitte erstelle auf Basis der obigen Kundenvorgaben eine vollständige,
+sofort lauffähige Webseite mit folgenden Qualitätsstandards:
+
+**Tech-Stack:** HTML5, CSS3 (CSS Variables), Vanilla JavaScript
+**Qualität:** Mobile-First, SEO-optimiert, DSGVO-Grundstruktur,
+             semantisches HTML, Accessibility
+**Ausgabe:** Separate Dateien: index.html / style.css / script.js
+**Sprache:** Deutsch (österreichisches Deutsch)
+**Besonderes:** Halte dich strikt an die genannten Farben und den Stil.
+               Erstelle professionelle Platzhaltertexte falls keine
+               Texte geliefert werden.
+
+Frage nach, falls wichtige Informationen fehlen!
+${'='.repeat(60)}`;
+}
+
+/* =====================================================
+   (copyPrompt entfernt – Kunden sehen den Prompt nicht)
+   ===================================================== */
+
+/* =====================================================
+   RESET
+   ===================================================== */
+
+function resetForm() {
+  if (!confirm('Fragebogen zurücksetzen? Alle Eingaben gehen verloren.')) return;
+  document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])').forEach(el => el.value = el.defaultValue || '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('textarea').forEach(el => el.value = '');
+  document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = el.defaultChecked);
+  // Default radios
+  document.querySelector('input[name="typ"]').checked = true;
+  document.querySelector('input[name="stil"][value="Klassisch & Seriös (traditionell, vertrauenswürdig)"]').checked = true;
+  document.querySelector('input[name="bg"][value="Hell (weißer/heller Hintergrund)"]').checked = true;
+  goTo(1);
+}
+</script>
+
+</body>
+</html>
