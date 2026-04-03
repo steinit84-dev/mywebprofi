@@ -214,7 +214,7 @@ p + p { margin-top: 1rem; }
 .logo:hover { opacity: 0.85; }
 
 .logo-img {
-  height: 60px;
+  height: 65px;
   width: auto;
   display: block;
 }
