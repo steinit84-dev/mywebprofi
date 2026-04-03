@@ -208,29 +208,16 @@ p + p { margin-top: 1rem; }
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  color: var(--white);
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  font-weight: 400;
-  letter-spacing: -0.01em;
   text-decoration: none;
+  transition: opacity 0.2s var(--ease-out);
 }
-.logo-mark {
-  width: 36px; height: 36px;
-  background: var(--gold);
-  color: var(--navy);
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0;
-  flex-shrink: 0;
-  transition: transform 0.2s var(--ease-out);
+.logo:hover { opacity: 0.85; }
+
+.logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
 }
-.logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
-.logo-text strong { font-weight: 700; color: var(--gold); }
 
 /* Nav links */
 .nav-links {
