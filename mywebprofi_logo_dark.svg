@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;display=swap');
+      text { font-family: Inter, system-ui, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- Hintergrund (Navy) -->
+  <rect x="0" y="0" width="320" height="80" rx="0" fill="#0A1628"/>
+
+  <!-- Icon: MW Monogramm -->
+  <rect x="8" y="8" width="64" height="64" rx="10" fill="#13233F"/>
+  <polyline points="24,62 24,22 40,40 56,22 56,62"
+    fill="none" stroke="#C49A3C" stroke-width="5"
+    stroke-linejoin="round" stroke-linecap="round"/>
+  <line x1="24" y1="67" x2="56" y2="67"
+    stroke="#C49A3C" stroke-width="1.8" opacity="0.35"/>
+
+  <!-- Wordmark hell auf dunkel -->
+  <text x="88" y="44" font-size="28" letter-spacing="-0.5">
+    <tspan font-weight="500" fill="#F8F4EE">My</tspan><tspan font-weight="400" fill="#C49A3C">Web</tspan><tspan font-weight="500" fill="#F8F4EE">Profi</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="89" y="62" font-size="9" font-weight="400" fill="#3D4560" letter-spacing="2.5">WEBDESIGN AGENTUR · AT</text>
+</svg>
