@@ -45,6 +45,7 @@
       </button>
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="#leistungen">Leistungen</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
         <li><a href="#startangebot">Gratis starten</a></li>
         <li><a href="#prozess">Ablauf</a></li>
         <li><a href="#ueber-mich">Über mich</a></li>
@@ -61,46 +62,104 @@
         <div class="hero-grid"></div>
         <div class="hero-glow glow-1"></div>
         <div class="hero-glow glow-2"></div>
+        <div class="hero-grain"></div>
       </div>
-      <div class="hero-content container">
-        <div class="hero-badge reveal">
-          <span class="badge-dot" aria-hidden="true"></span>
-          Österreichische Web-Agentur
-        </div>
-        <h1 class="hero-title reveal">
-          Ihre professionelle<br />
-          <em>Webseite</em> –<br />
-          ohne Kompromisse.
-        </h1>
-        <p class="hero-subtitle reveal">
-          Ich erstelle moderne, schnelle und rechtssichere Webseiten für
-          Kleinunternehmer und Privat&shy;personen in ganz Österreich.
-          Persönlich, unkompliziert und zu einem fairen Preis.
-        </p>
-        <div class="hero-actions reveal">
-          <a href="kundenbrief.html" class="btn btn-primary">
-            Kostenlose Webseite anfragen
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-          <a href="#leistungen" class="btn btn-ghost">Leistungen ansehen</a>
-        </div>
-        <div class="hero-stats reveal" role="list" aria-label="Statistiken">
-          <div class="stat" role="listitem">
-            <span class="stat-number" data-target="50">0</span><span class="stat-plus">+</span>
-            <span class="stat-label">Projekte umgesetzt</span>
+
+      <div class="hero-inner container">
+        <!-- Left: Text -->
+        <div class="hero-content">
+          <div class="hero-badge reveal">
+            <span class="badge-dot" aria-hidden="true"></span>
+            Österreichische Web-Agentur
           </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat" role="listitem">
-            <span class="stat-number" data-target="100">0</span><span class="stat-plus">%</span>
-            <span class="stat-label">Zufriedene Kunden</span>
+          <h1 class="hero-title reveal">
+            Ihre professionelle<br />
+            <em>Webseite</em> –<br />
+            ohne Kompromisse.
+          </h1>
+          <p class="hero-subtitle reveal">
+            Ich erstelle moderne, schnelle und rechtssichere Webseiten für
+            Kleinunternehmer und Privat&shy;personen in ganz Österreich.
+            Persönlich, unkompliziert und zu einem fairen Preis.
+          </p>
+          <div class="hero-actions reveal">
+            <a href="kundenbrief.html" class="btn btn-primary">
+              Kostenlose Webseite anfragen
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#portfolio" class="btn btn-ghost">Unsere Projekte</a>
           </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat" role="listitem">
-            <span class="stat-number" data-target="7">0</span><span class="stat-plus"> Tage</span>
-            <span class="stat-label">Ø Lieferzeit</span>
+          <div class="hero-stats reveal" role="list" aria-label="Statistiken">
+            <div class="stat" role="listitem">
+              <span class="stat-number" data-target="50">0</span><span class="stat-plus">+</span>
+              <span class="stat-label">Projekte umgesetzt</span>
+            </div>
+            <div class="stat-divider" aria-hidden="true"></div>
+            <div class="stat" role="listitem">
+              <span class="stat-number" data-target="100">0</span><span class="stat-plus">%</span>
+              <span class="stat-label">Zufriedene Kunden</span>
+            </div>
+            <div class="stat-divider" aria-hidden="true"></div>
+            <div class="stat" role="listitem">
+              <span class="stat-number" data-target="7">0</span><span class="stat-plus"> Tage</span>
+              <span class="stat-label">Ø Lieferzeit</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Floating Browser Mockup -->
+        <div class="hero-mockup reveal" aria-hidden="true">
+          <div class="browser-window browser-main">
+            <div class="browser-bar">
+              <span class="browser-dot" style="background:#ff5f57"></span>
+              <span class="browser-dot" style="background:#febc2e"></span>
+              <span class="browser-dot" style="background:#28c840"></span>
+              <div class="browser-url">mywebprofi.at/tischlerei-weber</div>
+            </div>
+            <div class="browser-screen bs-holz">
+              <div class="bs-nav">
+                <div class="bs-logo-bar"></div>
+                <div class="bs-nav-links"><span></span><span></span><span></span></div>
+              </div>
+              <div class="bs-hero-area">
+                <div class="bs-tag"></div>
+                <div class="bs-h1"></div>
+                <div class="bs-h1 short"></div>
+                <div class="bs-sub"></div>
+                <div class="bs-sub half"></div>
+                <div class="bs-cta"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Floating second mockup -->
+          <div class="browser-window browser-float">
+            <div class="browser-bar mini">
+              <span class="browser-dot" style="background:#ff5f57"></span>
+              <span class="browser-dot" style="background:#febc2e"></span>
+              <span class="browser-dot" style="background:#28c840"></span>
+              <div class="browser-url">mywebprofi.at/restaurant-bella</div>
+            </div>
+            <div class="browser-screen bs-restaurant">
+              <div class="bs-nav dark-nav">
+                <div class="bs-logo-bar light"></div>
+                <div class="bs-nav-links light"><span></span><span></span><span></span></div>
+              </div>
+              <div class="bs-hero-area dark-hero">
+                <div class="bs-tag gold"></div>
+                <div class="bs-h1 light"></div>
+                <div class="bs-h1 short light"></div>
+                <div class="bs-cta gold"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Deko-Label -->
+          <div class="mockup-label">
+            <span class="mockup-dot"></span>
+            Live Projekte
           </div>
         </div>
       </div>
+
       <div class="hero-scroll-hint" aria-hidden="true">
         <span>Scroll</span>
         <svg width="12" height="20" viewBox="0 0 12 20" fill="none"><rect x="1" y="1" width="10" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="5" r="1.5" fill="currentColor" class="scroll-dot"/></svg>
@@ -132,6 +191,217 @@
             <p>Kein Ticket-System, kein Callcenter. Sie sprechen direkt mit mir – persönlich, auf Augenhöhe, auf Österreichisch.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- =================== PORTFOLIO =================== -->
+    <section class="portfolio section section-dark" id="portfolio" aria-labelledby="portfolio-title">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Unsere Arbeit</span>
+          <h2 id="portfolio-title">Webseiten, die begeistern.</h2>
+          <p>Jedes Projekt ist ein Unikat — maßgeschneidert für den jeweiligen Kunden. Hier ein Blick auf einige unserer Arbeiten.</p>
+        </div>
+
+        <div class="portfolio-grid">
+
+          <!-- Projekt 1: Tischlerei -->
+          <article class="portfolio-card reveal" aria-label="Projekt: Tischlerei Weber">
+            <div class="pf-browser">
+              <div class="pf-bar">
+                <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                <span class="pf-url">tischlerei-weber.at</span>
+              </div>
+              <div class="pf-screen pf-holz">
+                <div class="pf-snav"><div class="pf-slogo"></div><div class="pf-slinks"><i></i><i></i><i></i></div></div>
+                <div class="pf-shero">
+                  <div class="pf-stag"></div>
+                  <div class="pf-sh1"></div>
+                  <div class="pf-sh1 w60"></div>
+                  <div class="pf-sp"></div>
+                  <div class="pf-sp w50"></div>
+                  <div class="pf-sbtn"></div>
+                </div>
+                <div class="pf-scards">
+                  <div class="pf-sc"></div><div class="pf-sc"></div><div class="pf-sc"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pf-info">
+              <div class="pf-tags">
+                <span class="pf-tag">Handwerk</span>
+                <span class="pf-tag">Onepager</span>
+              </div>
+              <h3>Tischlerei Weber</h3>
+              <p>Warme Erdtöne, klare Struktur – der klassische Handwerksbetrieb mit modernem Aufritt.</p>
+            </div>
+          </article>
+
+          <!-- Projekt 2: Restaurant -->
+          <article class="portfolio-card reveal" aria-label="Projekt: Restaurant Bella Vista">
+            <div class="pf-browser">
+              <div class="pf-bar">
+                <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                <span class="pf-url">restaurant-bellavista.at</span>
+              </div>
+              <div class="pf-screen pf-restaurant">
+                <div class="pf-snav dark"><div class="pf-slogo light"></div><div class="pf-slinks light"><i></i><i></i><i></i></div></div>
+                <div class="pf-shero dark-hero">
+                  <div class="pf-stag gold"></div>
+                  <div class="pf-sh1 light"></div>
+                  <div class="pf-sh1 w70 light"></div>
+                  <div class="pf-sbtn gold"></div>
+                </div>
+                <div class="pf-scards dark-cards">
+                  <div class="pf-sc dark"></div><div class="pf-sc dark"></div><div class="pf-sc dark"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pf-info">
+              <div class="pf-tags">
+                <span class="pf-tag">Gastronomie</span>
+                <span class="pf-tag">Mehrseiter</span>
+              </div>
+              <h3>Restaurant Bella Vista</h3>
+              <p>Elegantes Dunkeldesign mit Goldakzenten – Atmosphäre schon beim ersten Blick.</p>
+            </div>
+          </article>
+
+          <!-- Projekt 3: Yoga -->
+          <article class="portfolio-card reveal" aria-label="Projekt: Yoga Studio Vienna">
+            <div class="pf-browser">
+              <div class="pf-bar">
+                <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                <span class="pf-url">yogastudio-vienna.at</span>
+              </div>
+              <div class="pf-screen pf-yoga">
+                <div class="pf-snav"><div class="pf-slogo sage"></div><div class="pf-slinks"><i></i><i></i><i></i></div></div>
+                <div class="pf-shero yoga-hero">
+                  <div class="pf-stag sage"></div>
+                  <div class="pf-sh1 navy"></div>
+                  <div class="pf-sh1 w80 navy"></div>
+                  <div class="pf-sp navy-muted"></div>
+                  <div class="pf-sbtn sage-btn"></div>
+                </div>
+                <div class="pf-scards yoga-cards">
+                  <div class="pf-sc sage-c"></div><div class="pf-sc sage-c"></div><div class="pf-sc sage-c"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pf-info">
+              <div class="pf-tags">
+                <span class="pf-tag">Wellness</span>
+                <span class="pf-tag">Booking</span>
+              </div>
+              <h3>Yoga Studio Vienna</h3>
+              <p>Ruhige Pastelltöne, viel Weißraum – Entspannung beginnt auf der Startseite.</p>
+            </div>
+          </article>
+
+          <!-- Projekt 4: Elektro -->
+          <article class="portfolio-card reveal" aria-label="Projekt: Elektro Huber GmbH">
+            <div class="pf-browser">
+              <div class="pf-bar">
+                <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                <span class="pf-url">elektro-huber.at</span>
+              </div>
+              <div class="pf-screen pf-elektro">
+                <div class="pf-snav elekt"><div class="pf-slogo light"></div><div class="pf-slinks light"><i></i><i></i><i></i></div></div>
+                <div class="pf-shero elekt-hero">
+                  <div class="pf-stag elekt-tag"></div>
+                  <div class="pf-sh1 light"></div>
+                  <div class="pf-sh1 w75 light"></div>
+                  <div class="pf-sp light-muted"></div>
+                  <div class="pf-sbtn elekt-btn"></div>
+                </div>
+                <div class="pf-scards elekt-cards">
+                  <div class="pf-sc elekt-c"></div><div class="pf-sc elekt-c"></div><div class="pf-sc elekt-c"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pf-info">
+              <div class="pf-tags">
+                <span class="pf-tag">Handwerk</span>
+                <span class="pf-tag">Kontaktformular</span>
+              </div>
+              <h3>Elektro Huber GmbH</h3>
+              <p>Kräftiges Blau, technische Klarheit – vertrauenswürdig und modern.</p>
+            </div>
+          </article>
+
+          <!-- Projekt 5: Beauty -->
+          <article class="portfolio-card reveal" aria-label="Projekt: Beauty Salon Mia">
+            <div class="pf-browser">
+              <div class="pf-bar">
+                <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                <span class="pf-url">beauty-salon-mia.at</span>
+              </div>
+              <div class="pf-screen pf-beauty">
+                <div class="pf-snav beauty-nav"><div class="pf-slogo rose"></div><div class="pf-slinks"><i></i><i></i><i></i></div></div>
+                <div class="pf-shero beauty-hero">
+                  <div class="pf-stag rose"></div>
+                  <div class="pf-sh1 dark-rose"></div>
+                  <div class="pf-sh1 w65 dark-rose"></div>
+                  <div class="pf-sp muted-rose"></div>
+                  <div class="pf-sbtn rose-btn"></div>
+                </div>
+                <div class="pf-scards beauty-cards">
+                  <div class="pf-sc rose-c"></div><div class="pf-sc rose-c"></div><div class="pf-sc rose-c"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pf-info">
+              <div class="pf-tags">
+                <span class="pf-tag">Beauty</span>
+                <span class="pf-tag">Online-Buchung</span>
+              </div>
+              <h3>Beauty Salon Mia</h3>
+              <p>Sanfte Rosétöne, elegante Typografie – Luxus für jedes Budget.</p>
+            </div>
+          </article>
+
+          <!-- Projekt 6: Steuerberatung -->
+          <article class="portfolio-card reveal" aria-label="Projekt: Steuerberatung Müller">
+            <div class="pf-browser">
+              <div class="pf-bar">
+                <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+                <span class="pf-url">stb-mueller.at</span>
+              </div>
+              <div class="pf-screen pf-stb">
+                <div class="pf-snav stb-nav"><div class="pf-slogo stb-logo"></div><div class="pf-slinks stb-links"><i></i><i></i><i></i></div></div>
+                <div class="pf-shero stb-hero">
+                  <div class="pf-stag stb-tag"></div>
+                  <div class="pf-sh1"></div>
+                  <div class="pf-sh1 w70"></div>
+                  <div class="pf-sp"></div>
+                  <div class="pf-sp w55"></div>
+                  <div class="pf-sbtn stb-btn"></div>
+                </div>
+                <div class="pf-scards stb-cards">
+                  <div class="pf-sc stb-c"></div><div class="pf-sc stb-c"></div><div class="pf-sc stb-c"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pf-info">
+              <div class="pf-tags">
+                <span class="pf-tag">Beratung</span>
+                <span class="pf-tag">Mehrseiter</span>
+              </div>
+              <h3>Steuerberatung Müller</h3>
+              <p>Seriös, klar, vertrauenswürdig – Kompetenz auf den ersten Blick.</p>
+            </div>
+          </article>
+
+        </div><!-- /portfolio-grid -->
+
+        <div class="portfolio-cta reveal">
+          <p>Ihr Betrieb könnte das nächste Projekt sein — aktuell noch <strong>kostenlos</strong>.</p>
+          <a href="kundenbrief.html" class="btn btn-primary">
+            Jetzt bewerben
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+
       </div>
     </section>
 
