@@ -1001,8 +1001,8 @@ input[type="range"] {
 
       <div class="thankyou-contact">
         <p>Fragen? Erreichen Sie uns direkt:</p>
-        <a href="mailto:office@mywebprofi.at" class="ty-link">✉ office@mywebprofi.at</a>
-        <a href="tel:+4369911234567" class="ty-link">☎ +43 699 1234 567</a>
+        <a href="mailto:steinit84@gmail.com" class="ty-link">✉ steinit84@gmail.com</a>
+        <a href="tel:+4369911731265" class="ty-link">☎ +43 699 11731265</a>
       </div>
 
       <button class="btn btn-secondary" style="margin-top:2rem;" onclick="resetForm()">
@@ -1088,7 +1088,7 @@ function val(id) {
    4. Kopieren Sie die Form-ID (z.B. „xrgjabnk") und ersetzen Sie
       IHRE_FORMSPREE_ID unten damit
    ===================================================== */
-  const FORMSPREE_ID = 'mbdpzjbw'; // ← hier ersetzen!
+  const FORMSPREE_ID = 'mbdpzjbw';
 
 /* =====================================================
    SUBMIT: Prompt generieren + per Formspree senden
@@ -1113,14 +1113,12 @@ async function submitForm() {
   // ── 2. Formulardaten für Formspree zusammenstellen ──
   const formData = new FormData();
   formData.append('_subject', `🌐 Neue Webseiten-Anfrage: ${val('f-firma')} (${val('f-branche')})`);
-  formData.append('_replyto', val('f-kontakt'));
   formData.append('kunde_firma',    val('f-firma'));
   formData.append('kunde_branche',  val('f-branche'));
   formData.append('kunde_standort', val('f-standort'));
   formData.append('kunde_kontakt',  val('f-kontakt'));
   formData.append('paket',          val('f-paket'));
   formData.append('deadline',       val('f-deadline'));
-  // Vollständiger Prompt als ein Feld → das ist was Sie in Claude einfügen
   formData.append('WEBSEITEN_PROMPT', prompt);
 
   // ── 3. An Formspree senden ──
@@ -1131,22 +1129,17 @@ async function submitForm() {
       headers: { 'Accept': 'application/json' }
     });
 
-    if (res.ok) {
-      // Erfolg → Danke-Seite anzeigen
+    const json = await res.json();
+
+    if (res.ok && json.ok) {
       goTo(6);
     } else {
-      // Formspree-Fehler (z.B. ID noch nicht gesetzt)
+      console.error('Formspree error:', json);
       handleSubmitError(btn, btnText, icon, spinner);
     }
-  } catch (_) {
-    // Netzwerk-Fehler oder FORMSPREE_ID noch nicht eingetragen → Demo-Modus
-    if (FORMSPREE_ID === 'IHRE_FORMSPREE_ID') {
-      // Demo: Danke-Seite trotzdem anzeigen damit Sie testen können
-      console.warn('⚠️ Formspree-ID nicht gesetzt. Bitte IHRE_FORMSPREE_ID ersetzen!');
-      goTo(6);
-    } else {
-      handleSubmitError(btn, btnText, icon, spinner);
-    }
+  } catch (err) {
+    console.error('Fetch error:', err);
+    handleSubmitError(btn, btnText, icon, spinner);
   }
 }
 
@@ -1155,7 +1148,7 @@ function handleSubmitError(btn, btnText, icon, spinner) {
   btnText.textContent = 'Erneut versuchen';
   icon.style.display    = 'block';
   spinner.style.display = 'none';
-  alert('Es gab einen Fehler beim Senden. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt unter office@mywebprofi.at');
+  alert('Es gab einen Fehler beim Senden. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt unter steinit84@gmail.com');
 }
 
 /* =====================================================
